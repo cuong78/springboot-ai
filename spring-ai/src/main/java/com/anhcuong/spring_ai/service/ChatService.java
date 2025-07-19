@@ -20,9 +20,29 @@ public class ChatService {
         chatClient = builder.build();
     }
 
+    public String chatWithImage(MultipartFile file, String message) {
+        Media media = Media.builder()
+                .mimeType(MimeTypeUtils.parseMimeType(file.getContentType()))
+                .data(file.getResource())
+                .build();
+
+        ChatOptions chatOptions = ChatOptions.builder()
+                .temperature(0D)
+                .build();
+
+        return chatClient.prompt()
+                .options(chatOptions)
+                .system("You are Devteria.AI")
+                .user(promptUserSpec
+                        -> promptUserSpec.media(media)
+                        .text(message))
+                .call()
+                .content();
+    }
+
     public String chat(ChatRequest request) {
         SystemMessage systemMessage = new SystemMessage("""
-                You are MovieTheater.AI
+                You are Devteria.AI
                 You should response with a formal voice
                 """);
 
